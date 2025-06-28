@@ -631,10 +631,11 @@ async def send_message(request: ConversationRequest):
     if request.session_id not in sessions:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    # 各コンポーネントで処理
-    emotion = await EmotionDetector.detect(request.user_message)
-    bot_response = await MioBot.generate_response(request.user_message, request.conversation_history)
-    voice_feedback = await VoiceFeedback.generate(request.user_message, emotion, request.conversation_history)
+    # デバッグ用の固定レスポンス
+    print(f"リクエスト受信: {request.user_message}")
+    emotion = "喜び"
+    bot_response = "こんにちは！みおです😊 今日はどんなお話をしましょうか？"
+    voice_feedback = "【良かった点】自然な挨拶でとても好印象です！【アドバイス】この調子で会話を続けてみてください"
 
     # セッション履歴更新
     sessions[request.session_id]["history"].extend([
