@@ -1,0 +1,6 @@
+[build]
+builder = "nixpacks"
+buildCommand = "pip install -r ten-no-koe-backend/requirements.txt"
+
+[deploy]
+startCommand = "cd ten-no-koe-backend && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"

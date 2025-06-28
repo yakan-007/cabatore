@@ -1,0 +1,12 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "cd ten-no-koe-backend && pip install -r requirements.txt"
+  },
+  "deploy": {
+    "startCommand": "cd ten-no-koe-backend && uvicorn main:app --host 0.0.0.0 --port $PORT",
+    "restartPolicyType": "ON_FAILURE",
+    "restartPolicyMaxRetries": 10
+  }
+}
