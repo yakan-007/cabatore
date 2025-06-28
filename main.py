@@ -4,13 +4,17 @@ from pydantic import BaseModel
 from typing import List, Optional
 import google.generativeai as genai
 import os
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    print("dotenv not found, using environment variables directly")
 import uuid
 from datetime import datetime
 import json
 import random
 
-load_dotenv()
+# load_dotenv() is handled above
 
 app = FastAPI(title="キャバトレ API")
 
