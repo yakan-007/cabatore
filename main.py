@@ -631,11 +631,34 @@ async def send_message(request: ConversationRequest):
     if request.session_id not in sessions:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    # デバッグ用の固定レスポンス
-    print(f"リクエスト受信: {request.user_message}")
-    emotion = "喜び"
-    bot_response = "こんにちは！みおです😊 今日はどんなお話をしましょうか？"
-    voice_feedback = "【良かった点】自然な挨拶でとても好印象です！【アドバイス】この調子で会話を続けてみてください"
+    # 各コンポーネントで処理
+    print(f"=== メッセージ処理開始 ===")
+    print(f"セッションID: {request.session_id}")
+    print(f"ユーザーメッセージ: {request.user_message}")
+    print(f"APIキー存在確認: {bool(os.getenv('GOOGLE_API_KEY'))}")
+    print(f"APIキー先頭: {os.getenv('GOOGLE_API_KEY', '')[:10]}...")
+    
+    try:
+        print("感情検出開始...")
+        emotion = await EmotionDetector.detect(request.user_message)
+        print(f"感情検出結果: {emotion}")
+        
+        print("Bot応答生成開始...")
+        bot_response = await MioBot.generate_response(request.user_message, request.conversation_history)
+        print(f"Bot応答: {bot_response[:50]}...")
+        
+        print("天の声生成開始...")
+        voice_feedback = await VoiceFeedback.generate(request.user_message, emotion, request.conversation_history)
+        print(f"天の声: {voice_feedback[:50]}...")
+    except Exception as e:
+        print(f"エラー発生: {type(e).__name__}: {str(e)}")
+        import traceback
+        print(traceback.format_exc())
+        
+        # フォールバック
+        emotion = "中立"
+        bot_response = "そうなんですね〜！もう少し詳しく教えてもらえますか？😊"
+        voice_feedback = "【良かった点】自然な会話ができています【アドバイス】もう少し具体的に話すとより盛り上がりそうです"
 
     # セッション履歴更新
     sessions[request.session_id]["history"].extend([
